@@ -15,8 +15,6 @@
 # 2017-01-12: real 1m23.021s for 10978 doc: ~  8 ms per trial (MacBookPro2015)
 # 2019-08-10: real 3s    for 446 documents: ~  7 ms per trial (MacBookPro2015)
 
-cat "$1/euctr-trials-page_"* > "$1/allfiles.txt"
-
 # notes to myself: sed cannot use + or other
 # alternatively install gnu-sed: > brew install gnu-sed
 # perl: The -p argument makes sure the code gets executed on
@@ -25,7 +23,7 @@ cat "$1/euctr-trials-page_"* > "$1/allfiles.txt"
 # transform to json for import in mongodb, reference:
 # http://docs.mongodb.org/manual/reference/bios-example-collection/
 
-LC_CTYPE=C && LANG=C && < "$1/allfiles.txt" perl -ne '
+LC_CTYPE=C && LANG=C && < "$1.txt" perl -ne '
   # this section is faster with perl compared to sed
 
   # get UTC date, time in format correspondsing to the
@@ -128,7 +126,7 @@ perl -pe '
    s/^(.+?): (.*)$/ my ($tmp1, $tmp2) = (lc ($1), $2);
       $tmp1 =~ s! !_!g;
       $tmp1 =~ s![^a-z0-9_]!!g ;
-      $tmp2 =~ s![^a-zA-Z0-9+-:\/_@ ]*!!g ;
+      $tmp2 =~ s![^a-zA-Z0-9+-:\/_@ÁÉÍÓÚáéíóúñ≤≥"(‘’)… ]*!!g ;
       $tmp2 =~ s!^\s+|\s+$!!g ;
    "\"".$tmp1."\": \"".$tmp2."\",\n" /exgs;
    ' | \
@@ -212,4 +210,4 @@ perl -pe '
   ' | \
 sed \
   -e '$a\' \
-> "$1/allfiles.json"
+> "$1.json"
